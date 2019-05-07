@@ -50,7 +50,12 @@ but the <code>Main-Class</code> is set in the manifest. Cleans the jar if <code>
  
 The goal <code>jlink</code> calls the <code>jlink</code> in the sub dir <code>modules</code> and copies 
 all <code>jars</code> from the dependencies to the <code>modules</code> folder.
-The new <code>java runtime</code> is found in the <code>run</code> sub folder
+The new <code>java runtime</code> is found in the <code>run</code> sub folder. It is packed as 
+<code>zip-file</code> in the artifact name ending with <code>.run.zip</code>. The classifier is 
+<code>run</code> in the additional artifact.
 
-The goal <code>javapackager</code> calls the javapackager to create an installer for the jar.
+The goal <code>javapackager</code> calls the javapackager to create an installer for the jar. The installer
+is packed into the <code>zip-file</code> in the artifact name ending with <code>.install.zip</code>. The 
+classifier is <code>install</code> in the additional artifact.
+ 
  
