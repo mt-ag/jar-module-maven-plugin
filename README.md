@@ -8,7 +8,9 @@ The main option is to call jlink to generate a java with only the used modules a
 All needed jar are copied in one directory to update the automatic modules to be real modules.  
 After that the call to jlink is possible.
 
-The other option is to generate  
+The other option is to generate an installer for windows, macOS, linux or an image. It uses the 
+javapackager and it's required tools. Only available for Java 9 and 10 of Oracle JDK. 
+Not in Open JDK.   
 
 # Requirements
 Java version 9 or newer.
@@ -16,6 +18,8 @@ Java version 9 or newer.
 Maven to build the maven-plugin.
 
 Maven to use the maven-plugin.
+
+For goal javapackager an Oracle JDK 9 or 10 is needed.
 
 # Usage
 <pre><code>
@@ -57,5 +61,4 @@ The new <code>java runtime</code> is found in the <code>run</code> sub folder. I
 The goal <code>javapackager</code> calls the javapackager to create an installer for the jar. The installer
 is packed into the <code>zip-file</code> in the artifact name ending with <code>.install.zip</code>. The 
 classifier is <code>install</code> in the additional artifact.
- 
  
