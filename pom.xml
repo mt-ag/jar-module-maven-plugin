@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mtag.tools.maven</groupId>
+    <groupId>com.mt_ag.tools.maven</groupId>
     <artifactId>jar-module-maven-plugin</artifactId>
-    <version>1.1</version>
+    <version>1.0-SNAPSHOT</version>
 
     <packaging>maven-plugin</packaging>
 
     <name>Plugin to generate jars with module information as Maven Plugin</name>
     <description>The maven main core project description</description>
-    <url>http://github.com/mtag/jar-module-maven-plugin</url>
+    <url>http://github.com/mt-ag/jar-module-maven-plugin</url>
 
     <prerequisites>
         <maven>3.3.9</maven>
@@ -92,7 +92,7 @@
                         <id>validate</id>
                         <phase>validate</phase>
                         <configuration>
-                            <configLocation>mtag_checks.xml</configLocation>
+                            <configLocation>mt-ag_checks.xml</configLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
@@ -174,11 +174,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <distributionManagement>
-        <repository>
-            <id>MTNexus</id>
-            <name>MT Internal Repository</name>
-            <url>https://nexus.mt-ag.com/repository/mt-maven</url>
-        </repository>
-    </distributionManagement>
 </project>
