@@ -1,4 +1,4 @@
-package com.mtag.jar.module;
+package com.mt_ag.jar.module;
 
 import org.apache.maven.plugin.logging.Log;
 
