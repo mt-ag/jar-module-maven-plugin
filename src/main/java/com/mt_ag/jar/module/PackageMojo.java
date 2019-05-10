@@ -1,4 +1,4 @@
-package com.mtag.jar.module;
+package com.mt_ag.jar.module;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -106,6 +106,12 @@ public class PackageMojo extends UpdateModules {
   private String appMenuGroup;
 
   /**
+   * The description of the app.
+   */
+  @Parameter(property = "appDescription", defaultValue = "A short description of the app")
+  private String appDescription;
+
+  /**
    * The maven project.
    */
   @Parameter(property = "project", required = true, readonly = true)
@@ -155,7 +161,7 @@ public class PackageMojo extends UpdateModules {
     String name = appName != null ? appName : moduleName;
     callInDir(modulesPath, "javapackager", "-deploy", "-native", nativeType.name(), "-p", ".", "-srcdir",
         "inst", "-m", moduleName, "-name", name, "-appclass", main.get(), "-outdir", INSTALLER_DIR_NAME, "-title",
-        appTitle, "-Bvendor=" + appVendor, "-Bwin.menuGroup=" + appMenuGroup);
+        appTitle, "-description", appDescription, "-Bvendor=" + appVendor, "-Bwin.menuGroup=" + appMenuGroup);
 
     Path instZip = zipDir(modulesPath.resolve(INSTALLER_DIR_NAME), targetJar, INSTALL_PART_NAME);
     projectHelper.attachArtifact(project, "zip", INSTALL_PART_NAME, instZip.toFile());
