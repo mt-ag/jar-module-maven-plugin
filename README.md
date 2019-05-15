@@ -22,32 +22,31 @@ Maven to use the maven-plugin.
 For goal javapackager an Oracle JDK 9 or 10 is needed.
 
 # Usage
-<pre><code>
-    &lt;plugin>
-        &lt;groupId>com.mtag.tools.maven&lt;/groupId>
-        &lt;artifactId>jar-module-maven-plugin&lt;/artifactId>
-        &lt;version>1.0-SNAPSHOT&lt;/version>
-        &lt;configuration>
-            &lt;repack>true&lt;/repack>
-            &lt;openmodule>false&lt;/openmodule>
-            &lt;appName>LinkListe&lt;/appName>
-            &lt;appMenuGroup>MT AG&lt;/appMenuGroup>
-            &lt;appVendor>MT AG&lt;/appVendor>
-        &lt;/configuration>
-        &lt;executions>
-            &lt;execution>
-                &lt;id>make-assembly&lt;/id>
-                &lt;phase>package&lt;/phase>
-                &lt;goals>
-                    &lt;goal>jlink&lt;/goal>
-                    &lt;goal>javapackager&lt;/goal>
-                    &lt;goal>jar&lt;/goal>
-                &lt;/goals>
-            &lt;/execution>
-        &lt;/executions>
-    &lt;/plugin>
-</code>
-</pre>
+```xml
+<plugin>
+    <groupId>com.mtag.tools.maven</groupId>
+    <artifactId>jar-module-maven-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <configuration>
+        <repack>true</repack>
+        <openmodule>false</openmodule>
+        <appName>LinkListe</appName>
+        <appMenuGroup>MT AG</appMenuGroup>
+        <appVendor>MT AG</appVendor>
+    </configuration>
+    <executions>
+        <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+                <goal>jlink</goal>
+                <goal>javapackager</goal>
+                <goal>jar</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
 
 The goal <code>jar</code> sets the <code>main-class</code> if it is a module and the main class is not set
 but the <code>Main-Class</code> is set in the manifest. Cleans the jar if <code>repack</code> is true.
