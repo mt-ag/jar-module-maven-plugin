@@ -1,0 +1,39 @@
+ ------
+ Example update main class
+ ------
+ Wolfgang Nast
+ ------
+ 2019-05-15
+ ------
+
+Example update main class
+
+  Updating a jars main class
+
++----------+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.mt_ag.tools.maven</groupId>
+        <artifactId>jar-module-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <repack>true</repack>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
++----------+

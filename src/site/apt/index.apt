@@ -1,0 +1,45 @@
+ ------
+ Index
+ ------
+ Wolfgang Nast
+ ------
+ 2019-05-15
+ ------
+
+
+Plugin Jar Module Maven Plugin
+
+  This is a plugin for maven to use the module system added to java with the version 9.
+
+  It supports an easy task to update the main class in the jar. It is set to the same class as it is found in the
+  manifest information. It also can clean the jar of unused information.
+
+  The main usage is to jlink the jar and its dependencies to one application.
+
+  You can also create an installer for your application based on the application. (Only oracle java 9 and 10)
+
+* Goals Overview
+
+  General information about the goals.
+
+  * {{{./jar-mojo.html}jar-module:jar}} the goal to clean the jar.
+
+  * {{{./jlink-mojo.html}jar-module:jlink}} the goal to call jlink for a jar.
+
+  * {{{./javapackager-mojo.html}jar-module:javapackager}} the goal to call javapackager for the jar.
+
+* Usage
+
+  General instructions on how to use the Plugin Name can be found on the {{{./usage.html}usage page}}. Some more
+  specific use cases are described in the examples given below.
+
+* Examples
+
+  To provide you with better understanding of some usages of the Plugin Name,
+  you can take a look into the following examples:
+
+  * {{{./examples/example-one.html}Example set main class in module-info}}
+
+  * {{{./examples/example-two.html}Example call jlink for the module(jar)}}
+
+  * {{{./examples/example-three.html}Example call javapackager for the module(jar)}}

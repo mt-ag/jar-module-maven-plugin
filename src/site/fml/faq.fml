@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs id="FAQ" title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="question1">
+      <question>What means cleans a jar?</question>
+      <answer>
+        <p>
+          Answer
+        </p>
+        The Jar is reduced in size! The directory entries are removed, because they are never used.
+        In every entry is normally written a size of -1, so the real size comes after the entry. Now the entry
+        has the correct size. It saves 2nd size entry.
+      </answer>
+    </faq>
+    <faq id="question2">
+      <question>What means call jlink for a jar?</question>
+      <answer>
+        <p>
+          Answer
+        </p>
+        The jlink is called for the module in the jar. If it is an automatic module the module-info is generated and
+        added to the jar. Warning the rules for dependencies of modules are more strict than to jars. So you had to
+        correct the dependencies if there is an error in the call to jlink.
+      </answer>
+    </faq>
+  </part>
+</faqs>

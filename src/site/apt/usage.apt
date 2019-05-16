@@ -1,0 +1,38 @@
+ ------
+ Usage
+ ------
+ Wolfgang Nast
+ ------
+ 2019-05-16
+ ------
+
+
+Usage
+
+  The plugin is for three goals: jar, jlink, javapackager.
+
+* jar
+
+  the jar goal
+
+  *  {{{./jar-mojo.html}jar-module:jar}} the jar goal sets the main class and can clean a jar from unused directory
+  entries and the second size entry by replacing the size -1 with the real size.
+
+* jlink
+
+  the jlink goal
+
+  * {{{./jlink-mojo.html}jar-module:jlink}} the jlink goal calls the jlink command. Its first step is to copy all
+  dependencies in one folder. Second step is to load the jars as module if the module is an automatic module it
+  generates the module-info for the jar. Third step is to update all automatic modules with the module.info.
+  Fourth step is to call jlink. Fifth step is to zip the result and add the result in the attached artifacts.
+
+* javapackager
+
+  the javapackager goal
+
+  * {{{./javapackager-mojo.html}jar-module:javapackager}} the javapackager goal calls the javapackager command.
+  Its first step is to copy all dependencies in one folder. Second step is to load the jars as module if the module
+  is an automatic module it generates the module-info for the jar. Third step is to update all automatic modules with
+  the module.info. Fourth step is to call javapackager. Fifth step is to zip the installer and add the result in the
+  attached artifacts.
