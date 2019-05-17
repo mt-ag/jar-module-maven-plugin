@@ -12,6 +12,11 @@ The other option is to generate an installer for windows, macOS, linux or an ima
 javapackager and it's required tools. Only available for Java 9 and 10 of Oracle JDK. 
 Not in Open JDK.   
 
+# Documentation
+The generated site documentation of the maven plugin jar-module can be viewed at 
+
+https://mt-ag.github.io/jar-module-maven-plugin/
+
 # Requirements
 Java version 9 or newer.
 
