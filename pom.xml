@@ -73,6 +73,23 @@
                 <version>3.0.0</version>
             </plugin>
             <plugin>
+                <groupId>net.nicoulaj.maven.plugins</groupId>
+                <artifactId>checksum-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>checksum-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>artifacts</goal>
+                        </goals>
+                        <configuration>
+                            <attachChecksums>true</attachChecksums>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.4</version>
@@ -85,7 +102,6 @@
                         </goals>
                         <configuration>
                             <skip>true</skip>
-                            <passphrase>OpenSource</passphrase>
                         </configuration>
                     </execution>
                 </executions>
