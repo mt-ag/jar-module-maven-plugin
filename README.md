@@ -29,7 +29,7 @@ For goal javapackager an Oracle JDK 9 or 10 is needed.
 # Usage
 ```xml
 <plugin>
-    <groupId>com.mtag.tools.maven</groupId>
+    <groupId>com.mt_ag.tools.maven</groupId>
     <artifactId>jar-module-maven-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
     <configuration>
