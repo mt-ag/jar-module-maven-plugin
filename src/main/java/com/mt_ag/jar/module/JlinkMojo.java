@@ -55,7 +55,7 @@ public class JlinkMojo extends UpdateModules {
   /**
    * Strip debug. Remove debug infos.
    */
-  @Parameter(property = "stripDebug", defaultValue = "true")
+  @Parameter(property = "stripDebug")
   private boolean stripDebug;
 
   /**

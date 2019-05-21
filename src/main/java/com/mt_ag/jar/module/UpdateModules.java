@@ -1,6 +1,5 @@
 package com.mt_ag.jar.module;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -10,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -18,8 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -208,27 +204,21 @@ public abstract class UpdateModules extends AbstractMojo {
       return modulesPath;
     }
 
-    project.getArtifacts().forEach(new Consumer<Artifact>() {
-      @Override
-      public void accept(Artifact artifact) {
-        File sourceJar = artifact.getFile();
-        try {
-          Files.copy(sourceJar.toPath(), modulesPath.resolve(sourceJar.getName()));
-        } catch (IOException e) {
-          getLog().error("Unable to copy jar!", e);
+    project.getArtifacts().forEach(artifact -> {
+          File sourceJar = artifact.getFile();
+          try {
+            Files.copy(sourceJar.toPath(), modulesPath.resolve(sourceJar.getName()));
+          } catch (IOException e) {
+            getLog().error("Unable to copy jar!", e);
+          }
         }
-      }
-    });
+    );
 
     List<Path> autoJars;
     try (Stream<Path> pathStream = Files.list(modulesPath)) {
-      autoJars = pathStream.filter(new Predicate<Path>() {
-        @Override
-        public boolean test(Path path) {
-          ModuleReference mr = ModuleFinder.of(path).findAll().stream().findFirst().get();
-          return mr.descriptor().isAutomatic();
-        }
-      }).collect(Collectors.toList());
+      autoJars = pathStream.filter(path ->
+          ModuleFinder.of(path).findAll().stream().findFirst().get().descriptor().isAutomatic()
+      ).collect(Collectors.toList());
     } catch (IOException e) {
       throw new MojoExecutionException("Error getting files", e);
     }

@@ -128,11 +128,7 @@ public class CleanJarMojo extends AbstractMojo {
   private void copyCleanEntry(JarFile orgJar, JarOutputStream jarOut, JarEntry jar) {
     JarEntry newEntry = new JarEntry(jar);
     try (InputStream jarIn = orgJar.getInputStream(jar)) {
-      byte[] data = new byte[(int) jar.getSize()];
-      int anz = jarIn.read(data);
-      while (anz < data.length) {
-        anz += jarIn.read(data, anz, data.length - anz);
-      }
+      byte[] data = jarIn.readAllBytes();
       jarOut.putNextEntry(newEntry);
       jarOut.write(data);
       jarOut.closeEntry();
