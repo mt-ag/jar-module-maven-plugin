@@ -166,6 +166,7 @@
                         </goals>
                         <configuration>
                             <attachChecksums>true</attachChecksums>
+                            <csvSummary>false</csvSummary>
                             <fileSets>
                                 <fileSet>
                                     <directory>target</directory>
