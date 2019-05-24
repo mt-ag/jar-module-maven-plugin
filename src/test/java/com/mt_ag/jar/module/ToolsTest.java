@@ -1,8 +1,11 @@
 package com.mt_ag.jar.module;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.lang.module.ModuleFinder;
@@ -13,24 +16,97 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Tests the Tools class.
+ */
 @DisplayName("Test of the Tools")
-class ToolsTest {
+public class ToolsTest {
 
+  /**
+   * Tests the method callInDir.
+   *
+   * @throws MojoExecutionException not expected.
+   */
   @Test
-  void callInDir() {
+  void callInDir() throws MojoExecutionException {
+    Log mockLogger = Mockito.mock(Log.class);
+    Tools.callInDir(mockLogger, Paths.get("."), "jlink", "--version");
+    assertTrue(true);
+    Mockito.verify(mockLogger).info("command: jlink --version");
+    Mockito.verify(mockLogger).info("out:10.0.2\r\n");
+    Mockito.verify(mockLogger).info("err:");
   }
 
+  /**
+   * Tests the method setModuleMain, with module jar, where main class is set in the manifest but not
+   * in the module.
+   *
+   * @throws MojoExecutionException not expected.
+   * @throws IOException            not expected.
+   */
   @Test
-  void setModuleMain() throws MojoExecutionException, IOException {
+  void setModuleMainOk() throws MojoExecutionException, IOException {
+    Log mockLogger = Mockito.mock(Log.class);
+
     Path testPath = Paths.get("test-dir");
     Path orgPath = testPath.resolve("install-1.0.org.jar");
     Path copyPath = testPath.resolve("install-1.0.jar");
     Files.deleteIfExists(copyPath);
     Files.copy(orgPath, copyPath);
-    Tools.setModuleMain(new MockLogger(), copyPath);
+    Tools.setModuleMain(mockLogger, copyPath);
 
     ModuleReference mr = ModuleFinder.of(copyPath).findAll().stream().findFirst().get();
     assertEquals("com.mtag.tools.config.gui.LinksDesktop", mr.descriptor().mainClass().
         orElse(null), "main class is not as expected!");
+    Mockito.verify(mockLogger).info("MainClass: com.mtag.tools.config.gui.LinksDesktop");
+  }
+
+  /**
+   * Tests the method setModuleMain, with wrong filename.
+   */
+  @Test
+  void setModuleMainWrongFilename() {
+    Log mockLogger = Mockito.mock(Log.class);
+
+    Path testPath = Paths.get("test-dir");
+    Path copyPath = testPath.resolve("install-1.0.err.jar");
+    Assertions.assertThrows(RuntimeException.class, () ->
+        Tools.setModuleMain(mockLogger, copyPath));
+  }
+
+  /**
+   * Tests the method setModuleMain, with no main set.
+   *
+   * @throws MojoExecutionException not expected.
+   */
+  @Test
+  void setModuleMainNoMain() throws MojoExecutionException {
+    Log mockLogger = Mockito.mock(Log.class);
+
+    Path testPath = Paths.get("test-dir");
+    Path copyPath = testPath.resolve("install-noMain.jar");
+    Tools.setModuleMain(mockLogger, copyPath);
+
+    ModuleReference mr = ModuleFinder.of(copyPath).findAll().stream().findFirst().get();
+    assertNull(mr.descriptor().mainClass().
+        orElse(null), "main class is set! Not as expected!");
+  }
+
+  /**
+   * Tests the method setModuleMain, with no module jar.
+   *
+   * @throws MojoExecutionException not expected.
+   */
+  @Test
+  void setModuleMainNoModule() throws MojoExecutionException {
+    Log mockLogger = Mockito.mock(Log.class);
+
+    Path testPath = Paths.get("test-dir");
+    Path copyPath = testPath.resolve("install-noModule.jar");
+    Tools.setModuleMain(mockLogger, copyPath);
+
+    ModuleReference mr = ModuleFinder.of(copyPath).findAll().stream().findFirst().get();
+    assertNull(mr.descriptor().mainClass().
+        orElse(null), "main class is set! Not as expected!");
   }
 }
