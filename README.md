@@ -31,7 +31,7 @@ For goal javapackager an Oracle JDK 9 or 10 is needed.
 <plugin>
     <groupId>com.mt-ag.tools.maven</groupId>
     <artifactId>jar-module-maven-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <configuration>
         <repack>true</repack>
         <openmodule>false</openmodule>
