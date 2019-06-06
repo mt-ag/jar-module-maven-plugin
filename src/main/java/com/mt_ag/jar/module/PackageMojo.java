@@ -2,6 +2,7 @@ package com.mt_ag.jar.module;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -26,6 +27,11 @@ import java.util.jar.JarFile;
 @Mojo(name = "javapackager", defaultPhase = LifecyclePhase.PACKAGE,
     requiresDependencyCollection = ResolutionScope.RUNTIME, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class PackageMojo extends UpdateModules {
+
+  /**
+   * The const My Vendor.
+   */
+  private static final String MY_VENDOR = "My Vendor";
 
   /**
    * The installer dir name.
@@ -96,13 +102,13 @@ public class PackageMojo extends UpdateModules {
   /**
    * The name of the vendor.
    */
-  @Parameter(property = "appVendor", defaultValue = "my vendor")
+  @Parameter(property = "appVendor", defaultValue = MY_VENDOR)
   private String appVendor;
 
   /**
    * The name of the menu group.
    */
-  @Parameter(property = "appMenuGroup", defaultValue = "my vendor")
+  @Parameter(property = "appMenuGroup", defaultValue = MY_VENDOR)
   private String appMenuGroup;
 
   /**
@@ -124,17 +130,52 @@ public class PackageMojo extends UpdateModules {
   private MavenProjectHelper projectHelper;
 
   /**
+   * The used logger, set by excecute.
+   */
+  private Log myLog;
+
+  /**
+   * The standard constructor.
+   */
+  public PackageMojo() {
+    super();
+  }
+
+  /**
+   * The constructor for testing.
+   *
+   * @param pLog       the MockLog.
+   * @param pProject   the param project.
+   * @param pHelper    the project helper.
+   * @param pNative    nativeType.
+   * @param openmodule openmodule.
+   */
+  protected PackageMojo(Log pLog, MavenProject pProject, MavenProjectHelper pHelper,
+                        NativeType pNative,
+                        boolean openmodule) {
+    super(openmodule);
+    myLog = pLog;
+    project = pProject;
+    projectHelper = pHelper;
+    nativeType = pNative;
+    appMenuGroup = MY_VENDOR;
+    appVendor = MY_VENDOR;
+    appDescription = "A short description";
+  }
+
+  /**
    * The implementation of the mojo.
    *
    * @throws MojoExecutionException is thrown if an error occurs.
    */
   @Override
   public void execute() throws MojoExecutionException {
+    myLog = (myLog == null) ? getLog() : myLog;
     Path modulesPath = createModules(project);
 
     Path targetJar = project.getArtifact().getFile().toPath();
     for (Artifact art : project.getAttachedArtifacts()) {
-      getLog().info("attached artifact: " + art.getFile().getName());
+      myLog.info("attached artifact: " + art.getFile().getName());
     }
     ModuleDescriptor md = ModuleFinder.of(targetJar).findAll().stream().findFirst().get().descriptor();
     String moduleName = md.name();
@@ -150,7 +191,7 @@ public class PackageMojo extends UpdateModules {
       throw new MojoExecutionException("No main is set in jar");
     }
 
-    getLog().info("Found module:" + moduleName);
+    myLog.info("Found module:" + moduleName);
     try {
       Files.createDirectory(modulesPath.resolve("inst"));
     } catch (IOException e) {
@@ -159,9 +200,13 @@ public class PackageMojo extends UpdateModules {
 
     String appTitle = title != null ? title : moduleName;
     String name = appName != null ? appName : moduleName;
-    callInDir(modulesPath, "javapackager", "-deploy", "-native", nativeType.name(), "-p", ".", "-srcdir",
-        "inst", "-m", moduleName, "-name", name, "-appclass", main.get(), "-outdir", INSTALLER_DIR_NAME, "-title",
-        appTitle, "-description", appDescription, "-Bvendor=" + appVendor, "-Bwin.menuGroup=" + appMenuGroup);
+    CallResult result = callInDir(modulesPath, "javapackager", "-deploy", "-native", nativeType.name(), "-p",
+        ".", "-srcdir", "inst", "-m", moduleName, "-name", name, "-appclass", main.get(), "-outdir", INSTALLER_DIR_NAME,
+        "-title", appTitle, "-description", appDescription, "-Bvendor=" + appVendor, "-Bwin.menuGroup=" + appMenuGroup);
+
+    if (result.getExitVal() < 0) {
+      throw new MojoExecutionException("Error in calling javapackager!");
+    }
 
     Path instZip = zipDir(modulesPath.resolve(INSTALLER_DIR_NAME), targetJar, INSTALL_PART_NAME);
     projectHelper.attachArtifact(project, "zip", INSTALL_PART_NAME, instZip.toFile());

@@ -26,6 +26,11 @@ Maven to use the maven-plugin.
 
 For goal javapackager an Oracle JDK 9 or 10 is needed.
 
+# Download
+
+The link to the maven repository:
+https://search.maven.org/search?q=a:jar-module-maven-plugin
+
 # Usage
 ```xml
 <plugin>

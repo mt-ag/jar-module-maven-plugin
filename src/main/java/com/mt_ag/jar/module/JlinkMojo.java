@@ -78,30 +78,63 @@ public class JlinkMojo extends UpdateModules {
   private MavenProjectHelper projectHelper;
 
   /**
+   * The used logger, set by excecute.
+   */
+  private Log myLog;
+
+  /**
+   * The default constructor.
+   */
+  public JlinkMojo() {
+    super();
+  }
+
+  /**
+   * The constructor for testing.
+   *
+   * @param pLog          the MockLog.
+   * @param pProject      the param project.
+   * @param helper        the project helper.
+   * @param pCompress     the compress enum.
+   * @param minData       nin data.
+   * @param openmodule    openmodule.
+   * @param launcherArray the launchers as array.
+   */
+  protected JlinkMojo(Log pLog, MavenProject pProject, MavenProjectHelper helper, CompressEnum pCompress,
+                      boolean minData, boolean openmodule, String... launcherArray) {
+    super(openmodule);
+    myLog = pLog;
+    project = pProject;
+    projectHelper = helper;
+    compress = pCompress;
+    ignoreSigning = minData;
+    noManPages = minData;
+    noHeaderFiles = minData;
+    stripDebug = minData;
+    launcherList = List.of(launcherArray);
+  }
+
+  /**
    * The implementation of the Mojo.
    *
    * @throws MojoExecutionException is thrown if an error occurs.
    */
   @Override
   public void execute() throws MojoExecutionException {
-
+    myLog = (myLog != null) ? myLog : getLog();
     Path dir = project.getBasedir().toPath().resolve("target");
-    Log log = getLog();
-
-    log.info("Project:" + project.getId());
-    log.info("own artifact:" + project.getArtifact().getClass().getCanonicalName()
-        + project.getArtifact().toString() + "=" + project.getArtifact().getFile().getAbsolutePath());
+    myLog.info("Project:" + project.getId());
+    myLog.info("own artifact:" + project.getArtifact().getFile().getAbsolutePath());
 
     for (Artifact a : project.getArtifacts()) {
-      log.info("Artifact:" + a.getClass().getCanonicalName() + a.getGroupId() + ":" + a.getArtifactId()
-          + ":" + a.getVersion() + ":" + a.getFile().getAbsolutePath());
+      myLog.info("Artifact:" + a.getFile().getAbsolutePath());
     }
-    log.info("Work dir: " + dir.toAbsolutePath().toString());
+    myLog.info("Work dir: " + dir.toAbsolutePath().toString());
     Path modulesPath = createModules(project);
 
     Path targetJar = project.getArtifact().getFile().toPath();
     String moduleName = ModuleFinder.of(targetJar).findAll().stream().findFirst().get().descriptor().name();
-    log.info("Found module:" + moduleName);
+    myLog.info("Found module:" + moduleName);
     List<String> params = new ArrayList<>();
     params.add("jlink");
     if (ignoreSigning) {
@@ -123,8 +156,11 @@ public class JlinkMojo extends UpdateModules {
     Collections.addAll(params, "--compress=" + compress.getRate(), "--module-path", ".", "--add-modules",
         moduleName, "--output", "run");
 
-    callInDir(modulesPath, params.toArray(new String[0]));
-    Path runZipPath = zipDir(modulesPath.resolve("run"), targetJar, "run");
-    projectHelper.attachArtifact(project, "zip", "run", runZipPath.toFile());
+    CallResult result = callInDir(modulesPath, params.toArray(new String[0]));
+    if (result.getExitVal() < 0) {
+      throw new MojoExecutionException("Error in calling jlink!");
+    }
+    Path zipPath = zipDir(modulesPath.resolve("run"), targetJar, "run");
+    projectHelper.attachArtifact(project, "zip", "run", zipPath.toFile());
   }
 }

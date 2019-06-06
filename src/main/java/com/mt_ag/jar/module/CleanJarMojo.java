@@ -46,13 +46,48 @@ public class CleanJarMojo extends AbstractMojo {
   private MavenProjectHelper projectHelper;
 
   /**
+   * The used logger, set by excecute.
+   */
+  private Log myLog;
+
+  /**
+   * The default constructor.
+   */
+  public CleanJarMojo() {
+    super();
+  }
+
+  /**
+   * The constructor for testing.
+   *
+   * @param pLog    the MockLog.
+   * @param pRepack the param repack.
+   */
+  protected CleanJarMojo(Log pLog, boolean pRepack) {
+    myLog = pLog;
+    repack = pRepack;
+  }
+
+  /**
    * The implementation. Sets the main class if it is a module and the main class is not set but part of the manifest.
    *
    * @throws MojoExecutionException is thrown if an error occurs.
    */
   @Override
   public void execute() throws MojoExecutionException {
+    myLog = getLog();
     Path jarPath = project.getArtifact().getFile().toPath();
+    projectHelper.attachArtifact(project, "jar", "clean", exec(jarPath).toFile());
+  }
+
+  /**
+   * The main execute method to update the jar and clean it.
+   *
+   * @param jarPath the path to the artifact(jar).
+   * @return the new artifact.
+   * @throws MojoExecutionException is thrown if an IOException is thrown.
+   */
+  protected Path exec(Path jarPath) throws MojoExecutionException {
     String name = jarPath.getFileName().toString();
     String tempName;
     if (name.endsWith(".jar")) {
@@ -69,7 +104,7 @@ public class CleanJarMojo extends AbstractMojo {
     } catch (IOException e) {
       throw new MojoExecutionException("Unable to copy target.jar", e);
     }
-    Tools.setModuleMain(getLog(), tempJar);
+    Tools.setModuleMain(myLog, tempJar);
     if (repack) {
       rePack(tempJar, name);
       try {
@@ -84,7 +119,7 @@ public class CleanJarMojo extends AbstractMojo {
         throw new MojoExecutionException("unable to rename file!", e);
       }
     }
-    projectHelper.attachArtifact(project, "jar", "clean", cleanPath.toFile());
+    return cleanPath;
   }
 
   /**
@@ -95,20 +130,19 @@ public class CleanJarMojo extends AbstractMojo {
    * @throws MojoExecutionException is thrown if an error occurs.
    */
   private void rePack(Path orgPath, String name) throws MojoExecutionException {
-    Log log = getLog();
     Path cleanedPath = orgPath.resolveSibling(name);
     if (!Files.exists(cleanedPath)) {
       try {
         Files.createFile(cleanedPath);
       } catch (IOException e) {
-        log.error("unable to create File: " + name);
+        myLog.error("unable to create File: " + name);
       }
     }
     try (JarFile orgJar = new JarFile(orgPath.toFile());
          JarOutputStream jarOut = new JarOutputStream(Files.newOutputStream(cleanedPath,
              StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
       for (JarEntry jar : Collections.list(orgJar.entries())) {
-        log.info("Entry:" + jar.getName());
+        myLog.info("Entry:" + jar.getName());
         if (!jar.isDirectory()) {
           copyCleanEntry(orgJar, jarOut, jar);
         }
@@ -124,16 +158,15 @@ public class CleanJarMojo extends AbstractMojo {
    * @param orgJar the org JarFile.
    * @param jarOut the jar output stream.
    * @param jar    the used entry.
+   * @throws IOException thrown, when an error in io occurs.
    */
-  private void copyCleanEntry(JarFile orgJar, JarOutputStream jarOut, JarEntry jar) {
+  private static void copyCleanEntry(JarFile orgJar, JarOutputStream jarOut, JarEntry jar) throws IOException {
     JarEntry newEntry = new JarEntry(jar);
     try (InputStream jarIn = orgJar.getInputStream(jar)) {
       byte[] data = jarIn.readAllBytes();
       jarOut.putNextEntry(newEntry);
       jarOut.write(data);
       jarOut.closeEntry();
-    } catch (IOException e) {
-      getLog().error("Error reading input stream to entry: " + jar.getName(), e);
     }
   }
 }

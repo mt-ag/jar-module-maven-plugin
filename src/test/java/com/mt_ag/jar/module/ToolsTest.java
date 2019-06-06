@@ -33,8 +33,8 @@ public class ToolsTest {
     Tools.callInDir(mockLogger, Paths.get("."), "jlink", "--version");
     assertTrue(true);
     Mockito.verify(mockLogger).info("command: jlink --version");
-    Mockito.verify(mockLogger).info("out:10.0.2\r\n");
-    Mockito.verify(mockLogger).info("err:");
+    Mockito.verify(mockLogger).info("exitVal: 0");
+    Mockito.verify(mockLogger).info("out:");
   }
 
   /**
@@ -70,7 +70,7 @@ public class ToolsTest {
 
     Path testPath = Paths.get("test-dir");
     Path copyPath = testPath.resolve("install-1.0.err.jar");
-    Assertions.assertThrows(RuntimeException.class, () ->
+    assertThrows(RuntimeException.class, () ->
         Tools.setModuleMain(mockLogger, copyPath));
   }
 
@@ -107,6 +107,24 @@ public class ToolsTest {
 
     ModuleReference mr = ModuleFinder.of(copyPath).findAll().stream().findFirst().get();
     assertNull(mr.descriptor().mainClass().
+        orElse(null), "main class is set! Not as expected!");
+  }
+
+  /**
+   * Tests the method setModuleMain, with module jar and main is set.
+   *
+   * @throws MojoExecutionException not expected.
+   */
+  @Test
+  void setModuleMainOK() throws MojoExecutionException {
+    Log mockLogger = Mockito.mock(Log.class);
+
+    Path testPath = Paths.get("test-dir");
+    Path copyPath = testPath.resolve("install-OK.jar");
+    Tools.setModuleMain(mockLogger, copyPath);
+
+    ModuleReference mr = ModuleFinder.of(copyPath).findAll().stream().findFirst().get();
+    assertEquals("com.mtag.tools.config.gui.LinksDesktop", mr.descriptor().mainClass().
         orElse(null), "main class is set! Not as expected!");
   }
 }
