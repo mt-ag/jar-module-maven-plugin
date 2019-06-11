@@ -229,7 +229,7 @@ public class JlinkMojoTest {
 
     JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.NoCompress, true, true,
         "test=yaml.example/com.mt_ag.tools.config.gui.LinksDesktop");
-    assertThrows(MojoExecutionException.class, jlinkMojo::execute);
+    assertThrows(MojoExecutionException.class, jlinkMojo::execute, "Expected Exception is not thrown!");
 
     assertTrue(Files.exists(tempTargetDir.resolve("yaml-example-1.0-SNAPSHOT.run.zip")), "Missing result of jlink!");
     TestTools.deleteDir(tempDir);

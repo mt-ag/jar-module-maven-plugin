@@ -38,8 +38,8 @@ public class ClearJarMojoTest {
 
     Path cleanPath = cleanJarMojo.exec(copyPath);
 
-    assertTrue(Files.exists(copyPath));
-    assertTrue(Files.exists(cleanPath));
+    assertTrue(Files.exists(copyPath), "Copy path dose not exist!");
+    assertTrue(Files.exists(cleanPath), "Clean path dose not exist!");
 
     Mockito.verify(mockLog).info("MainClass: com.mtag.tools.config.gui.LinksDesktop");
     Mockito.verify(mockLog).info("command: jar -u -f install-1.0.temp.jar -e com.mtag.tools.config.gui.LinksDesktop");
@@ -70,8 +70,8 @@ public class ClearJarMojoTest {
 
     Path cleanPath = cleanJarMojo.exec(copyPath);
 
-    assertTrue(Files.exists(copyPath));
-    assertTrue(Files.exists(cleanPath));
+    assertTrue(Files.exists(copyPath), "Copy path dose not exist!");
+    assertTrue(Files.exists(cleanPath), "Clean path dose not exist!");
 
     Mockito.verify(mockLog).info("MainClass: com.mtag.tools.config.gui.LinksDesktop");
     Mockito.verify(mockLog).info("command: jar -u -f install-1.0.temp.jar -e com.mtag.tools.config.gui.LinksDesktop");

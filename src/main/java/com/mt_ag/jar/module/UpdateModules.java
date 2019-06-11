@@ -132,7 +132,7 @@ public abstract class UpdateModules extends AbstractMojo {
    * @param dir        the dir
    * @throws IOException thrown if an io error occurs.
    */
-  private void zipDir(String parent, ZipOutputStream zipTmpOut, ByteArrayOutputStream tmpOut,
+  private static void zipDir(String parent, ZipOutputStream zipTmpOut, ByteArrayOutputStream tmpOut,
                       ZipOutputStream zipFileOut, Path dir) throws IOException {
     try (Stream<Path> pathStream = Files.list(dir)) {
       for (Path file : pathStream.collect(Collectors.toList())) {
@@ -164,7 +164,7 @@ public abstract class UpdateModules extends AbstractMojo {
    * @param lines the lines.
    * @return the not found classes.
    */
-  private Set<String> readMissingClassesFromLines(List<String> lines) {
+  private static Set<String> readMissingClassesFromLines(List<String> lines) {
     Set<String> classes = new TreeSet<>();
     for (String line : lines) {
       if (line.endsWith("not found")) {
@@ -233,7 +233,7 @@ public abstract class UpdateModules extends AbstractMojo {
    * @param targetDir the target dir.
    * @throws IOException is thrown if an IOException is thrown.
    */
-  private void copyDir(Path srcDir, Path targetDir) throws IOException {
+  private static void copyDir(Path srcDir, Path targetDir) throws IOException {
     try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(srcDir)) {
       for (Path path : dirStream) {
         if (Files.isDirectory(path)) {
@@ -253,7 +253,7 @@ public abstract class UpdateModules extends AbstractMojo {
    * @param jarPath the jar path.
    * @throws MojoExecutionException is thrown if an IOException is thrown.
    */
-  private void makeSingleVersionJar(Path jarPath) throws MojoExecutionException {
+  private static void makeSingleVersionJar(Path jarPath) throws MojoExecutionException {
     String jarName = jarPath.getFileName().toString();
     Path tempJar = jarPath.resolveSibling(jarName + ".temp");
 

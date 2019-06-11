@@ -30,7 +30,7 @@ public class ToolsTest {
   void callInDir() throws MojoExecutionException {
     Log mockLogger = Mockito.mock(Log.class);
     Tools.callInDir(mockLogger, Paths.get("."), "jlink", "--version");
-    assertTrue(true);
+    assertTrue(true, "Not expected!");
     Mockito.verify(mockLogger).info("command: jlink --version");
     Mockito.verify(mockLogger).info("exitVal: 0");
     Mockito.verify(mockLogger).info("out:");
@@ -70,7 +70,7 @@ public class ToolsTest {
     Path testPath = Paths.get("test-dir");
     Path copyPath = testPath.resolve("install-1.0.err.jar");
     assertThrows(RuntimeException.class, () ->
-        Tools.setModuleMain(mockLogger, copyPath));
+        Tools.setModuleMain(mockLogger, copyPath), "Expected to throw a RuntimeException!");
   }
 
   /**

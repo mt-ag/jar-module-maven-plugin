@@ -128,7 +128,7 @@ public class PackageMojoTest {
 
     PackageMojo packageMojo = new PackageMojo(mockLog, mavenProject, helper, PackageMojo.NativeType.msi, true);
 
-    assertThrows(MojoExecutionException.class, packageMojo::execute);
+    assertThrows(MojoExecutionException.class, packageMojo::execute, "Expected Exception is not thrown!");
 
     assertFalse(Files.exists(tempTargetDir.resolve("yaml-example-1.0-SNAPSHOT.install.zip")),
         "Missing result of packager!");
