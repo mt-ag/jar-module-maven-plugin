@@ -6,18 +6,52 @@ import org.apache.maven.plugin.logging.Log;
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleFinder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.jar.JarFile;
 
 /**
  * The Tools interface for static methods. Do not use as interface.
  */
 public interface Tools {
+
+  /**
+   * Class run.
+   */
+  class Run {
+
+    /**
+     * Private constructor of static class.
+     */
+    private Run() {
+
+    }
+
+    /**
+     * The used executor.
+     */
+    private static  Executor executor = Executors.newSingleThreadExecutor();
+    /**
+     * The run call.
+     * @param runnable the method to exec.
+     */
+    public static void run(Runnable runnable) {
+      executor.execute(runnable);
+    }
+  }
+
+  /**
+   * The run call.
+   * @param runnable the method to exec.
+   */
+  static void run(Runnable runnable) {
+    Run.run(runnable);
+  }
+
   /**
    * Calls a command with parameters in the work dir.
    *
@@ -31,18 +65,15 @@ public interface Tools {
     try {
       List<String> args = new ArrayList<>(Arrays.asList(param));
       log.info("command: " + String.join(" ", args));
-      Path tempFile = Files.createTempFile("Temp", "out.txt");
-      Process proc = new ProcessBuilder().directory(dir.toFile()).command(args).redirectErrorStream(true)
-          .redirectOutput(tempFile.toFile()).start();
+      Process proc = new ProcessBuilder().directory(dir.toFile()).command(args).redirectErrorStream(true).start();
+      AsyncStreamReader asRead = new AsyncStreamReader(proc.getInputStream());
+      run(asRead);
       int exitVal = proc.waitFor();
 
       log.info("exitVal: " + exitVal);
-      List<String> retVal = Files.readAllLines(tempFile, StandardCharsets.UTF_8);
-      Files.delete(tempFile);
+      List<String> retVal = asRead.getOutput();
       log.info("out:");
-      for (String line : retVal) {
-        log.info(line);
-      }
+      retVal.forEach(log::info);
       return new CallResult(exitVal, retVal);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
@@ -63,15 +94,16 @@ public interface Tools {
   static void setModuleMain(Log log, Path targetJar) throws MojoExecutionException {
     ModuleDescriptor md = ModuleFinder.of(targetJar).findAll().stream().findFirst().get().descriptor();
     if (!md.mainClass().isPresent() && !md.isAutomatic()) {
+      String mainClass;
       try (JarFile targetJarJar = new JarFile(targetJar.toFile())) {
-        String mainClass = targetJarJar.getManifest().getMainAttributes().getValue("Main-Class");
+        mainClass = targetJarJar.getManifest().getMainAttributes().getValue("Main-Class");
         log.info("MainClass: " + mainClass);
-
-        if (mainClass != null) {
-          callInDir(log, targetJar.getParent(), "jar", "-u", "-f", targetJar.getFileName().toString(), "-e", mainClass);
-        }
       } catch (IOException e) {
         throw new MojoExecutionException("Error in reading jar!" + targetJar, e);
+      }
+
+      if (mainClass != null) {
+        callInDir(log, targetJar.getParent(), "jar", "-u", "-f", targetJar.getFileName().toString(), "-e", mainClass);
       }
     }
   }
