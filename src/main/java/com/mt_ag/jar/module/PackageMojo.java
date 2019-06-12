@@ -84,43 +84,43 @@ public class PackageMojo extends UpdateModules {
   /**
    * The generated installer type.
    */
-  @Parameter(property = "nativeType", defaultValue = "image")
+  @Parameter(defaultValue = "image")
   private NativeType nativeType;
 
   /**
    * The title of the app.
    */
-  @Parameter(property = "appTitle", defaultValue = "")
-  private String title;
+  @Parameter
+  private String appTitle;
 
   /**
    * The name of the app.
    */
-  @Parameter(property = "appName", defaultValue = "")
+  @Parameter
   private String appName;
 
   /**
    * The name of the vendor.
    */
-  @Parameter(property = "appVendor", defaultValue = MY_VENDOR)
+  @Parameter(defaultValue = MY_VENDOR)
   private String appVendor;
 
   /**
    * The name of the menu group.
    */
-  @Parameter(property = "appMenuGroup", defaultValue = MY_VENDOR)
+  @Parameter(defaultValue = MY_VENDOR)
   private String appMenuGroup;
 
   /**
    * The description of the app.
    */
-  @Parameter(property = "appDescription", defaultValue = "A short description of the app")
+  @Parameter(defaultValue = "A short description of the app")
   private String appDescription;
 
   /**
    * The maven project.
    */
-  @Parameter(property = "project", required = true, readonly = true)
+  @Parameter(required = true, readonly = true)
   private MavenProject project;
 
   /**
@@ -198,11 +198,11 @@ public class PackageMojo extends UpdateModules {
       throw new MojoExecutionException("Unable to create dir inst!");
     }
 
-    String appTitle = title != null ? title : moduleName;
+    String title = appTitle != null ? appTitle : moduleName;
     String name = appName != null ? appName : moduleName;
     CallResult result = callInDir(modulesPath, "javapackager", "-deploy", "-native", nativeType.name(), "-p",
         ".", "-srcdir", "inst", "-m", moduleName, "-name", name, "-appclass", main.get(), "-outdir", INSTALLER_DIR_NAME,
-        "-title", appTitle, "-description", appDescription, "-Bvendor=" + appVendor, "-Bwin.menuGroup=" + appMenuGroup);
+        "-title", title, "-description", appDescription, "-Bvendor=" + appVendor, "-Bwin.menuGroup=" + appMenuGroup);
 
     if (result.getExitVal() < 0) {
       throw new MojoExecutionException("Error in calling javapackager!");

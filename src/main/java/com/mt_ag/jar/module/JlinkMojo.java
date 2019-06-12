@@ -31,31 +31,31 @@ public class JlinkMojo extends UpdateModules {
    * ConstantStringSharing = 1
    * ZIP = 2.
    */
-  @Parameter(property = "compress", defaultValue = "ZIP")
+  @Parameter(defaultValue = "ZIP")
   private CompressEnum compress;
 
   /**
    * Ignore the signing information in the jars.
    */
-  @Parameter(property = "ignoreSigning", defaultValue = "true")
+  @Parameter(defaultValue = "true")
   private boolean ignoreSigning;
 
   /**
    * Don't add header files.
    */
-  @Parameter(property = "noHeaderFiles", defaultValue = "true")
+  @Parameter(defaultValue = "true")
   private boolean noHeaderFiles;
 
   /**
    * Don't add man pages.
    */
-  @Parameter(property = "noManPages", defaultValue = "true")
+  @Parameter(defaultValue = "true")
   private boolean noManPages;
 
   /**
    * Strip debug. Remove debug infos.
    */
-  @Parameter(property = "stripDebug")
+  @Parameter
   private boolean stripDebug;
 
   /**

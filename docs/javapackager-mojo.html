@@ -106,7 +106,7 @@ if so it generates the module-info and adds it to the jar.</div>
             
 <td><tt>-</tt></td>
             
-<td>The description of the app.<br /><b>Default value is</b>: <tt>A short description of the app</tt>.<br /><b>User property is</b>: <tt>appDescription</tt>.<br /></td>
+<td>The description of the app.<br /><b>Default value is</b>: <tt>A short description of the app</tt>.<br /></td>
           </tr>
           
 <tr class="a">
@@ -117,7 +117,7 @@ if so it generates the module-info and adds it to the jar.</div>
             
 <td><tt>-</tt></td>
             
-<td>The name of the menu group.<br /><b>Default value is</b>: <tt>My Vendor</tt>.<br /><b>User property is</b>: <tt>appMenuGroup</tt>.<br /></td>
+<td>The name of the menu group.<br /><b>Default value is</b>: <tt>My Vendor</tt>.<br /></td>
           </tr>
           
 <tr class="b">
@@ -128,10 +128,21 @@ if so it generates the module-info and adds it to the jar.</div>
             
 <td><tt>-</tt></td>
             
-<td>The name of the app.<br /><b>User property is</b>: <tt>appName</tt>.<br /></td>
+<td>The name of the app.<br /></td>
           </tr>
           
 <tr class="a">
+            
+<td><tt><a href="#appTitle">&lt;appTitle&gt;</a></tt></td>
+            
+<td><tt>String</tt></td>
+            
+<td><tt>-</tt></td>
+            
+<td>The title of the app.<br /></td>
+          </tr>
+          
+<tr class="b">
             
 <td><tt><a href="#appVendor">&lt;appVendor&gt;</a></tt></td>
             
@@ -139,10 +150,10 @@ if so it generates the module-info and adds it to the jar.</div>
             
 <td><tt>-</tt></td>
             
-<td>The name of the vendor.<br /><b>Default value is</b>: <tt>My Vendor</tt>.<br /><b>User property is</b>: <tt>appVendor</tt>.<br /></td>
+<td>The name of the vendor.<br /><b>Default value is</b>: <tt>My Vendor</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><tt><a href="#createmissing">&lt;createmissing&gt;</a></tt></td>
             
@@ -155,7 +166,7 @@ missing module that will be static linked to your app. So the
 dependency is only for compile time not for runtime.<br /></td>
           </tr>
           
-<tr class="a">
+<tr class="b">
             
 <td><tt><a href="#nativeType">&lt;nativeType&gt;</a></tt></td>
             
@@ -163,10 +174,10 @@ dependency is only for compile time not for runtime.<br /></td>
             
 <td><tt>-</tt></td>
             
-<td>The generated installer type.<br /><b>Default value is</b>: <tt>image</tt>.<br /><b>User property is</b>: <tt>nativeType</tt>.<br /></td>
+<td>The generated installer type.<br /><b>Default value is</b>: <tt>image</tt>.<br /></td>
           </tr>
           
-<tr class="b">
+<tr class="a">
             
 <td><tt><a href="#openmodule">&lt;openmodule&gt;</a></tt></td>
             
@@ -176,17 +187,6 @@ dependency is only for compile time not for runtime.<br /></td>
             
 <td>Maven parameter to set if it generates an open module or a standard
 module.<br /></td>
-          </tr>
-          
-<tr class="a">
-            
-<td><tt><a href="#title">&lt;title&gt;</a></tt></td>
-            
-<td><tt>String</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>The title of the app.<br /><b>User property is</b>: <tt>appTitle</tt>.<br /></td>
           </tr>
         </table>
       </div>
@@ -205,8 +205,6 @@ module.<br /></td>
           
 <li><b>Required</b>: <tt>No</tt></li>
           
-<li><b>User Property</b>: <tt>appDescription</tt></li>
-          
 <li><b>Default</b>: <tt>A short description of the app</tt></li>
         </ul><hr /></div>
 <div class="section">
@@ -220,8 +218,6 @@ module.<br /></td>
           
 <li><b>Required</b>: <tt>No</tt></li>
           
-<li><b>User Property</b>: <tt>appMenuGroup</tt></li>
-          
 <li><b>Default</b>: <tt>My Vendor</tt></li>
         </ul><hr /></div>
 <div class="section">
@@ -234,8 +230,17 @@ module.<br /></td>
 <li><b>Type</b>: <tt>java.lang.String</tt></li>
           
 <li><b>Required</b>: <tt>No</tt></li>
+        </ul><hr /></div>
+<div class="section">
+<h4><a name="a.3CappTitle.3E"></a><b><a name="appTitle">&lt;appTitle&gt;</a></b></h4>
+        
+<div>The title of the app.</div>
+        
+<ul>
           
-<li><b>User Property</b>: <tt>appName</tt></li>
+<li><b>Type</b>: <tt>java.lang.String</tt></li>
+          
+<li><b>Required</b>: <tt>No</tt></li>
         </ul><hr /></div>
 <div class="section">
 <h4><a name="a.3CappVendor.3E"></a><b><a name="appVendor">&lt;appVendor&gt;</a></b></h4>
@@ -247,8 +252,6 @@ module.<br /></td>
 <li><b>Type</b>: <tt>java.lang.String</tt></li>
           
 <li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>appVendor</tt></li>
           
 <li><b>Default</b>: <tt>My Vendor</tt></li>
         </ul><hr /></div>
@@ -276,8 +279,6 @@ dependency is only for compile time not for runtime.</div>
           
 <li><b>Required</b>: <tt>No</tt></li>
           
-<li><b>User Property</b>: <tt>nativeType</tt></li>
-          
 <li><b>Default</b>: <tt>image</tt></li>
         </ul><hr /></div>
 <div class="section">
@@ -291,19 +292,6 @@ module.</div>
 <li><b>Type</b>: <tt>boolean</tt></li>
           
 <li><b>Required</b>: <tt>No</tt></li>
-        </ul><hr /></div>
-<div class="section">
-<h4><a name="a.3Ctitle.3E"></a><b><a name="title">&lt;title&gt;</a></b></h4>
-        
-<div>The title of the app.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>User Property</b>: <tt>appTitle</tt></li>
         </ul>
       </div></div>
     </div>

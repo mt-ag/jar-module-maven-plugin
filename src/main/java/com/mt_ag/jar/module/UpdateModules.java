@@ -257,7 +257,7 @@ public abstract class UpdateModules extends AbstractMojo {
    * @param jarPath the jar path.
    * @throws MojoExecutionException is thrown if an IOException is thrown.
    */
-  private static void makeSingleVersionJar(Path jarPath) throws MojoExecutionException {
+  private static void makeSingleReleaseJar(Path jarPath) throws MojoExecutionException {
     String jarName = jarPath.getFileName().toString();
     Path tempJar = jarPath.resolveSibling(jarName + ".temp");
 
@@ -408,7 +408,7 @@ public abstract class UpdateModules extends AbstractMojo {
     }
 
     for (Path path : multiJars) {
-      makeSingleVersionJar(path);
+      makeSingleReleaseJar(path);
     }
 
     List<Path> autoJars;
