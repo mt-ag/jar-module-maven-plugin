@@ -46,7 +46,7 @@ public class CleanJarMojo extends AbstractMojo {
   private MavenProjectHelper projectHelper;
 
   /**
-   * The used logger, set by excecute.
+   * The used logger, set by execute.
    */
   private Log myLog;
 

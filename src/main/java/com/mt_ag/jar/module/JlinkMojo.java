@@ -78,7 +78,7 @@ public class JlinkMojo extends UpdateModules {
   private MavenProjectHelper projectHelper;
 
   /**
-   * The used logger, set by excecute.
+   * The used logger, set by execute.
    */
   private Log myLog;
 
@@ -98,11 +98,12 @@ public class JlinkMojo extends UpdateModules {
    * @param pCompress     the compress enum.
    * @param minData       nin data.
    * @param openmodule    openmodule.
+   * @param createMissing create missing classes in missing module.
    * @param launcherArray the launchers as array.
    */
   protected JlinkMojo(Log pLog, MavenProject pProject, MavenProjectHelper helper, CompressEnum pCompress,
-                      boolean minData, boolean openmodule, String... launcherArray) {
-    super(openmodule);
+                      boolean minData, boolean openmodule, boolean createMissing, String... launcherArray) {
+    super(openmodule, createMissing);
     myLog = pLog;
     project = pProject;
     projectHelper = helper;

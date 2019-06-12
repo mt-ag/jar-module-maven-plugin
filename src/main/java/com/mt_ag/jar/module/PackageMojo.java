@@ -130,7 +130,7 @@ public class PackageMojo extends UpdateModules {
   private MavenProjectHelper projectHelper;
 
   /**
-   * The used logger, set by excecute.
+   * The used logger, set by execute.
    */
   private Log myLog;
 
@@ -144,16 +144,16 @@ public class PackageMojo extends UpdateModules {
   /**
    * The constructor for testing.
    *
-   * @param pLog       the MockLog.
-   * @param pProject   the param project.
-   * @param pHelper    the project helper.
-   * @param pNative    nativeType.
-   * @param openmodule openmodule.
+   * @param pLog          the MockLog.
+   * @param pProject      the param project.
+   * @param pHelper       the project helper.
+   * @param pNative       nativeType.
+   * @param openmodule    openmodule.
+   * @param createmissing create missing classes in missing module.
    */
   protected PackageMojo(Log pLog, MavenProject pProject, MavenProjectHelper pHelper,
-                        NativeType pNative,
-                        boolean openmodule) {
-    super(openmodule);
+                        NativeType pNative, boolean openmodule, boolean createmissing) {
+    super(openmodule, createmissing);
     myLog = pLog;
     project = pProject;
     projectHelper = pHelper;

@@ -64,10 +64,11 @@ public abstract class UpdateModules extends AbstractMojo {
   private boolean openmodule;
 
   /**
-   * Maven parameter to set if the unresolved classes should be removed.
+   * Maven parameter to set if it generates the missing classes in a missing module that will be static linked to your
+   * app. So the dependency is only for compile time not for runtime.
    */
   @Parameter
-  private boolean removeUnresolvedClasses;
+  private boolean createmissing;
 
   /**
    * The standard constructor.
@@ -78,10 +79,13 @@ public abstract class UpdateModules extends AbstractMojo {
 
   /**
    * The constructor for tests.
-   * @param pOpenmodule use as openmodule.
+   *
+   * @param pOpenmodule    use as openmodule.
+   * @param pCreatemissing create the missing classes in the missing module.
    */
-  protected UpdateModules(boolean pOpenmodule) {
+  protected UpdateModules(boolean pOpenmodule, boolean pCreatemissing) {
     openmodule = pOpenmodule;
+    createmissing = pCreatemissing;
   }
 
   /**
@@ -133,7 +137,7 @@ public abstract class UpdateModules extends AbstractMojo {
    * @throws IOException thrown if an io error occurs.
    */
   private static void zipDir(String parent, ZipOutputStream zipTmpOut, ByteArrayOutputStream tmpOut,
-                      ZipOutputStream zipFileOut, Path dir) throws IOException {
+                             ZipOutputStream zipFileOut, Path dir) throws IOException {
     try (Stream<Path> pathStream = Files.list(dir)) {
       for (Path file : pathStream.collect(Collectors.toList())) {
         if (Files.isDirectory(file)) {
@@ -190,7 +194,7 @@ public abstract class UpdateModules extends AbstractMojo {
     List<String> lines = callInDir(workDir, JDEPS, MODULE_PATH, LOCAL_DIR, moduleType, subDir, jarName).getOutLines();
     Set<String> classes = readMissingClassesFromLines(lines);
 
-    if (!classes.isEmpty()) {
+    if (createmissing && !classes.isEmpty()) {
       addClassesToMissingModule(jarPath, classes);
       callInDir(workDir, JDEPS, MODULE_PATH, LOCAL_DIR, moduleType, subDir, jarName);
       Path moduleInfoPath = modulePath.resolve("module-info.java");

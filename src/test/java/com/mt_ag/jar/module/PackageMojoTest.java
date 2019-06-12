@@ -72,7 +72,7 @@ public class PackageMojoTest {
 
     MavenProjectHelper helper = Mockito.mock(MavenProjectHelper.class);
 
-    PackageMojo packageMojo = new PackageMojo(mockLog, mavenProject, helper, PackageMojo.NativeType.exe, false);
+    PackageMojo packageMojo = new PackageMojo(mockLog, mavenProject, helper, PackageMojo.NativeType.exe, false, false);
     packageMojo.execute();
 
     assertTrue(Files.exists(tempTargetDir.resolve("yaml-example-1.0-SNAPSHOT.install.zip")), "Missing result of packager!");
@@ -126,7 +126,7 @@ public class PackageMojoTest {
 
     MavenProjectHelper helper = Mockito.mock(MavenProjectHelper.class);
 
-    PackageMojo packageMojo = new PackageMojo(mockLog, mavenProject, helper, PackageMojo.NativeType.msi, true);
+    PackageMojo packageMojo = new PackageMojo(mockLog, mavenProject, helper, PackageMojo.NativeType.msi, true, true);
 
     assertThrows(MojoExecutionException.class, packageMojo::execute, "Expected Exception is not thrown!");
 

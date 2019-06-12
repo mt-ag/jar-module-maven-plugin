@@ -1,1 +1,1 @@
-typeSearchIndex = [{"p":"com.mt_ag.jar.module","l":"MockLogger"}]
+typeSearchIndex = [{"p":"com.mt_ag.jar.module","l":"ClearJarMojoTest"},{"p":"com.mt_ag.jar.module","l":"JlinkMojoTest"},{"p":"com.mt_ag.jar.module","l":"PackageMojoTest"},{"p":"com.mt_ag.jar.module","l":"TestTools"},{"p":"com.mt_ag.jar.module","l":"ToolsTest"}]
