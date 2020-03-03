@@ -66,20 +66,20 @@ public class JlinkMojoTest {
 
     MavenProjectHelper helper = Mockito.mock(MavenProjectHelper.class);
 
-    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.ZIP, true, false, true);
-    jlinkMojo.execute();
+    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.ZIP, true, false);
+    assertThrows(MojoExecutionException.class, jlinkMojo::execute, "Expected Exception is not thrown!");
 
-    assertTrue(Files.exists(tempTargetDir.resolve("asm-test-1.0.run.zip")), "Missing result of jlink!");
+    assertFalse(Files.exists(tempTargetDir.resolve("asm-test-1.0.run.zip")), "Found result of jlink!");
     TestTools.deleteDir(tempDir);
   }
 
   /**
-   * Test of exec with all parameters set.
+   * Test of exec with all parameters set. Expected error in log4j-api-2.11.2.jar to generate module-info.java.
    *
    * @throws IOException            not expected to be thrown.
    */
   @Test
-  public void execStripAllOK() throws IOException {
+  public void execStripAllErrorMissingClasses() throws IOException {
     Path tempDir = Paths.get("temp");
     if (Files.exists(tempDir)) {
       TestTools.deleteDir(tempDir);
@@ -115,7 +115,7 @@ public class JlinkMojoTest {
 
     MavenProjectHelper helper = Mockito.mock(MavenProjectHelper.class);
 
-    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.NoCompress, false, false, false,
+    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.NoCompress, false, false,
         "test=asm.test/com.mt_ag.asm.Asm");
     assertThrows(MojoExecutionException.class, jlinkMojo::execute, "Expected Exception is not thrown!");
 
@@ -171,7 +171,7 @@ public class JlinkMojoTest {
 
     MavenProjectHelper helper = Mockito.mock(MavenProjectHelper.class);
 
-    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.NoCompress, false, false, true,
+    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.NoCompress, false, false,
         "test=yaml.example/com.mt_ag.tools.config.gui.LinksDesktop");
     jlinkMojo.execute();
 
@@ -226,11 +226,11 @@ public class JlinkMojoTest {
 
     MavenProjectHelper helper = Mockito.mock(MavenProjectHelper.class);
 
-    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.NoCompress, true, true, true,
+    JlinkMojo jlinkMojo = new JlinkMojo(mockLog, mavenProject, helper, CompressEnum.NoCompress, true, true,
         "test=yaml.example/com.mt_ag.tools.config.gui.LinksDesktop");
     assertThrows(MojoExecutionException.class, jlinkMojo::execute, "Expected Exception is not thrown!");
 
-    assertTrue(Files.exists(tempTargetDir.resolve("yaml-example-1.0-SNAPSHOT.run.zip")), "Missing result of jlink!");
+    assertFalse(Files.exists(tempTargetDir.resolve("asm-test-1.0.run.zip")), "Found result of jlink!");
     TestTools.deleteDir(tempDir);
   }
 }

@@ -98,12 +98,11 @@ public class JlinkMojo extends UpdateModules {
    * @param pCompress     the compress enum.
    * @param minData       nin data.
    * @param openmodule    openmodule.
-   * @param createMissing create missing classes in missing module.
    * @param launcherArray the launchers as array.
    */
   protected JlinkMojo(Log pLog, MavenProject pProject, MavenProjectHelper helper, CompressEnum pCompress,
-                      boolean minData, boolean openmodule, boolean createMissing, String... launcherArray) {
-    super(openmodule, createMissing);
+                      boolean minData, boolean openmodule, String... launcherArray) {
+    super(openmodule);
     myLog = pLog;
     project = pProject;
     projectHelper = helper;

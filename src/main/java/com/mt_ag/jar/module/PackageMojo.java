@@ -149,11 +149,10 @@ public class PackageMojo extends UpdateModules {
    * @param pHelper       the project helper.
    * @param pNative       nativeType.
    * @param openmodule    openmodule.
-   * @param createmissing create missing classes in missing module.
    */
   protected PackageMojo(Log pLog, MavenProject pProject, MavenProjectHelper pHelper,
-                        NativeType pNative, boolean openmodule, boolean createmissing) {
-    super(openmodule, createmissing);
+                        NativeType pNative, boolean openmodule) {
+    super(openmodule);
     myLog = pLog;
     project = pProject;
     projectHelper = pHelper;

@@ -6,7 +6,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +17,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -64,13 +59,6 @@ public abstract class UpdateModules extends AbstractMojo {
   private boolean openmodule;
 
   /**
-   * Maven parameter to set if it generates the missing classes in a missing module that will be static linked to your
-   * app. So the dependency is only for compile time not for runtime.
-   */
-  @Parameter
-  private boolean createmissing;
-
-  /**
    * The standard constructor.
    */
   public UpdateModules() {
@@ -81,11 +69,9 @@ public abstract class UpdateModules extends AbstractMojo {
    * The constructor for tests.
    *
    * @param pOpenmodule    use as openmodule.
-   * @param pCreatemissing create the missing classes in the missing module.
    */
-  protected UpdateModules(boolean pOpenmodule, boolean pCreatemissing) {
+  protected UpdateModules(boolean pOpenmodule) {
     openmodule = pOpenmodule;
-    createmissing = pCreatemissing;
   }
 
   /**
@@ -114,7 +100,6 @@ public abstract class UpdateModules extends AbstractMojo {
     String runZipName = targetFileName.substring(0, targetFileName.length() - UpdateModules.EXTENSION_LENGTH)
         + "." + subName + ".zip";
     Path zipFile = targetPath.resolveSibling(runZipName);
-
     try (ByteArrayOutputStream tmpOut = new ByteArrayOutputStream();
          ZipOutputStream zipTmpOut = new ZipOutputStream(tmpOut);
          ZipOutputStream zipFileOut = new ZipOutputStream(Files.newOutputStream(zipFile,
@@ -163,22 +148,6 @@ public abstract class UpdateModules extends AbstractMojo {
   }
 
   /**
-   * Reads the missing classes from the lines of jedps answer.
-   *
-   * @param lines the lines.
-   * @return the not found classes.
-   */
-  private static Set<String> readMissingClassesFromLines(List<String> lines) {
-    Set<String> classes = new TreeSet<>();
-    for (String line : lines) {
-      if (line.endsWith("not found")) {
-        classes.add(line.trim().replaceAll("\\s+", " ").split("\\s")[2]);
-      }
-    }
-    return classes;
-  }
-
-  /**
    * Calls the commands to generate the module-info.java.
    *
    * @param workDir the working directory (target/modules).
@@ -191,28 +160,8 @@ public abstract class UpdateModules extends AbstractMojo {
     String moduleType = (openmodule) ? "--generate-open-module" : "--generate-module-info";
     String moduleName = ModuleFinder.of(jarPath).findAll().stream().findFirst().get().descriptor().name();
     Path modulePath = workDir.resolve(subDir + '/' + moduleName);
-    List<String> lines = callInDir(workDir, JDEPS, MODULE_PATH, LOCAL_DIR, moduleType, subDir, jarName).getOutLines();
-    Set<String> classes = readMissingClassesFromLines(lines);
-
-    if (createmissing && !classes.isEmpty()) {
-      addClassesToMissingModule(jarPath, classes);
-      callInDir(workDir, JDEPS, MODULE_PATH, LOCAL_DIR, moduleType, subDir, jarName);
-      Path moduleInfoPath = modulePath.resolve("module-info.java");
-      try {
-        List<String> infoLines = Files.readAllLines(moduleInfoPath, StandardCharsets.UTF_8);
-        try (BufferedWriter wb = Files.newBufferedWriter(moduleInfoPath, StandardOpenOption.TRUNCATE_EXISTING)) {
-          for (String line : infoLines) {
-            if (line.endsWith("missing;")) {
-              wb.write("  requires static missing;");
-            } else {
-              wb.write(line);
-            }
-            wb.newLine();
-          }
-        }
-      } catch (IOException e) {
-        throw new MojoExecutionException("unable to find module dir for jar: " + jarName, e);
-      }
+    if (callInDir(workDir, JDEPS, MODULE_PATH, LOCAL_DIR, moduleType, subDir, jarName).getExitVal() != 0) {
+      throw new MojoExecutionException("unable to generate module-info. jdeps returned with error for jar: " + jarName);
     }
 
     Path subDirPath = workDir.resolve(subDir);
@@ -286,80 +235,6 @@ public abstract class UpdateModules extends AbstractMojo {
       Files.move(tempJar, jarPath);
     } catch (IOException e) {
       throw new MojoExecutionException("unable delete or move jar file: " + jarName, e);
-    }
-  }
-
-  /**
-   * Adds the missing classes to the missing module.
-   *
-   * @param jarPath the path of the jar, that misses the classes.
-   * @param classes the list of missing classes.
-   * @throws MojoExecutionException is throw when an io error occurs.
-   */
-  private void addClassesToMissingModule(Path jarPath, Set<String> classes) throws MojoExecutionException {
-    Path missingPath = jarPath.resolveSibling("missing");
-    if (Files.notExists(missingPath)) {
-      try {
-        Files.createDirectory(missingPath);
-      } catch (IOException e) {
-        throw new MojoExecutionException("Unable to create missing dir!", e);
-      }
-    }
-    List<String> classRev = new ArrayList<>(classes);
-    Collections.reverse(classRev);
-    StringBuilder innerClasses = new StringBuilder();
-    for (String clazz : classRev) {
-      int posInner = clazz.indexOf('$');
-      if (posInner > 0) {
-        getLog().info("innerclass " + clazz);
-        innerClasses.append("\npublic class ").append(clazz.substring(posInner + 1)).append(" {}");
-      } else {
-        writeAndCompileClass(missingPath, innerClasses, clazz);
-        innerClasses.setLength(0);
-      }
-    }
-    try {
-      Files.deleteIfExists(jarPath.resolveSibling("missing.jar"));
-    } catch (IOException e) {
-      throw new MojoExecutionException("Unable to delete existing missing.jar", e);
-    }
-    callInDir(missingPath, "jar", "--create", "--file=../missing.jar", "*");
-  }
-
-  /**
-   * Method to write and compile a class.
-   *
-   * @param missingPath  the missing class.
-   * @param innerClasses the inner classes.
-   * @param clazz        the class.
-   * @throws MojoExecutionException thrown if an IOException is thrown.
-   */
-  private void writeAndCompileClass(Path missingPath, StringBuilder innerClasses, String clazz)
-      throws MojoExecutionException {
-    String filename = clazz.replace('.', '/') + ".java";
-    int pos = clazz.lastIndexOf('.');
-    String packagge = clazz.substring(0, pos);
-    String className = clazz.substring(pos + 1);
-    Path clazzPath = missingPath.resolve(filename);
-    Path parentPath = clazzPath.getParent();
-    try {
-      Files.createDirectories(parentPath);
-    } catch (IOException e) {
-      throw new MojoExecutionException("Unable to create package dirs for: " + clazz, e);
-    }
-    try (BufferedWriter out = Files.newBufferedWriter(clazzPath, StandardOpenOption.CREATE)) {
-      out.append("package ").append(packagge).append(";");
-      out.newLine();
-      out.append("public class ").append(className).append("{ ").append(innerClasses).append("}");
-    } catch (IOException e) {
-      throw new MojoExecutionException("Unable to write class: " + clazz, e);
-    }
-    callInDir(missingPath, "javac",
-        packagge.replace('.', '/') + '/' + className + ".java");
-    try {
-      Files.delete(clazzPath);
-    } catch (IOException e) {
-      throw new MojoExecutionException("Unable to delete source of: " + clazz, e);
     }
   }
 
