@@ -15,7 +15,7 @@ jobs:
         java-version: 11
     - name: Build with Maven
       run: mvn clean install --file pom.xml
-    - run: mkdir staging && cp target/*.jar staging
+    - run: mkdir staging && copy target\*.jar staging
     - name: Add Artifacts
       uses: actions/upload-artifact@v1
       with:
