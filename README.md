@@ -31,6 +31,9 @@ For goal javapackager an Oracle JDK 9 or 10 is needed.
 The link to the maven repository:
 https://search.maven.org/search?q=a:jar-module-maven-plugin
 
+# Build
+![](https://github.com/mt-ag/jar-module-maven-plugin/workflows/maven_windows/badge.svg)
+
 # Usage
 ```xml
 <plugin>
