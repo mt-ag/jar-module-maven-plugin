@@ -32,7 +32,7 @@ The link to the maven repository:
 https://search.maven.org/search?q=a:jar-module-maven-plugin
 
 # Build
-![](https://github.com/mt-ag/jar-module-maven-plugin/workflows/maven_windows/badge.svg)
+![](https://github.com/mt-ag/jar-module-maven-plugin/workflows/Java%20Windows%20Build/badge.svg)
 
 # Usage
 ```xml
