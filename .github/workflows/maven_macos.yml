@@ -1,7 +1,9 @@
 name: Java MacOS Build
 
-on: [push]
-
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
 
@@ -13,5 +15,11 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Build with Maven
-      run: mvn clean install --file pom.xml
+    - name: Maven clean
+      run: mvn clean --file pom.xml
+    - name: Maven compile
+      run: mvn compile --file pom.xml
+    - name: Maven test
+      run: mvn test --file pom.xml
+    - name: Maven install
+      run: mvn install "-Dmaven.test.skip=true" --file pom.xml

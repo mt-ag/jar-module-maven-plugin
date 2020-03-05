@@ -1,7 +1,9 @@
 name: Java Windows Build
 
-on: [push]
-
+on:
+  push:
+    branches:
+      - master
 jobs:
   build:
 
@@ -32,5 +34,5 @@ jobs:
     - name: Add Artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: Package
+        name: PluginJars
         path: staging
