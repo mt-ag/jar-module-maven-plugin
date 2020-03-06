@@ -22,13 +22,13 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Maven clean
-      run: mvn clean --file pom.xml
+      run: mvnw clean --file pom.xml
     - name: Maven compile
-      run: mvn compile --file pom.xml
+      run: mvnw compile --file pom.xml
     - name: Maven test
-      run: mvn test --file pom.xml
+      run: mvnw test --file pom.xml
     - name: Maven install
-      run: mvn install "-Dmaven.test.skip=true" --file pom.xml
+      run: mvnw install "-Dmaven.test.skip=true" --file pom.xml
     - run: mkdir staging
     - run: copy target\*.jar staging
     - name: Add Artifacts
