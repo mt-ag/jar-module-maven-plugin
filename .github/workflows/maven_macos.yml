@@ -15,11 +15,12 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - run: chmod a+x mvnw
     - name: Maven clean
-      run: mvn clean --file pom.xml
+      run: ./mvnw clean --file pom.xml
     - name: Maven compile
-      run: mvn compile --file pom.xml
+      run: ./mvnw compile --file pom.xml
     - name: Maven test
-      run: mvn test --file pom.xml
+      run: ./mvnw test --file pom.xml
     - name: Maven install
       run: mvn install "-Dmaven.test.skip=true" --file pom.xml
